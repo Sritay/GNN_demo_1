@@ -16,7 +16,7 @@ The architecture was implemented from scratch to demonstrate direct control over
 
 ### Training Data
 The model was trained on synthetic data generated via LAMMPS using an Embedded Atom Method (EAM) potential.
-* **Rationale:** EAM was chosen over DFT for this demo to allow for rapid iteration and high-volume data generation (~200 frames) during the architectural debugging phase.
+* **Rationale:** EAM was chosen over DFT for this demo to allow for rapid iteration and data generation (~200 uncorrelated frames) during the architectural debugging phase.
 * **Surrogate Modeling:** The model serves as a surrogate for the EAM potential. The pipeline allows training data to be swapped for DFT/Ab-Initio data without changing the model architecture.
 
 ---
@@ -31,13 +31,13 @@ The model was trained on synthetic data generated via LAMMPS using an Embedded A
   Loss = MSE(E_pred, E_ref) + lambda * MSE(-grad(E_pred), F_ref)
   ```
 
-* **Extensivity:** Local environments are learned by the model, allowing it to scale from 100 atoms (training) to 1,000+ atoms (inference) without retraining.
+* **Extensivity:** Local environments are learned by the model, allowing it to scale from 100 atoms (training) to 800+ atoms (inference) without retraining.
 
 ---
 
 ## Results
 
-The model was trained on small **108-atom** supercells and tested on an unseen **864-atom** system.
+The model was trained on small **108-atom** supercells and tested on an unseen **864-atom** system with defects.
 
 | Metric | Result | Target (Chemical Accuracy) |
 | :--- | :--- | :--- |
@@ -96,13 +96,28 @@ python predict.py
 
 ## Technical Details (The Math)
 
-The core operation is a spatial convolution. The update rule for the feature vector $h_i$ at layer $l+1$ is:
+The model relies on a **Spatial Graph Convolution** where the graph topology is dynamic and defined by continuous interatomic distances.
 
-$$ h_i^{(l+1)} = \text{SiLU} \left( \sum_{j} W \cdot h_j^{(l)} \cdot \text{Gaussian}(r_{ij}) \right) $$
+### 1. Adjacency Matrix Construction
+Unlike standard GNNs that use binary edges (0 or 1), a **Weighted Soft Adjacency Matrix** ($A$) was constructed based on the radial distance between atoms via the helper function `get_pbc_distances`.
 
-Where the summation runs over all neighbors $j$, and $r_{ij}$ is the distance computed under Periodic Boundary Conditions.
+**A. Minimum Image Convention (PBCs):**
+To ensure the graph respects the crystal lattice, distances are calculated using a differentiable Minimum Image Convention:
+
+$$\vec{\delta}_{ij} = (\vec{x}_j - \vec{x}_i) - \text{Box} \cdot \text{round}\left( \frac{\vec{x}_j - \vec{x}_i}{\text{Box}} \right)$$
+
+**B. Gaussian Radial Basis Function (RBF):**
+The elements of the adjacency matrix $A_{ij}$ are defined by a Gaussian kernel centered at the equilibrium bond length ($\mu \approx 2.77 \AA $):
+
+$$A_{ij} = \exp \left( - \frac{(\Vert \vec{\delta}_{ij} \Vert - \mu)^2}{\sigma^2} \right)$$
+
+### 2. Message Passing Update
+The feature update rule for atom $i$ at layer $l+1$ is a spatial convolution of its neighbors' features weighted by this adjacency matrix:
+
+$$h_i^{(l+1)} = \text{SiLU} \left( \sum_{j \in \mathcal{N}(i)} A_{ij} \cdot (W \cdot h_j^{(l)}) \right)$$
+
+This architecture effectively mimics a learnable continuous interaction potential, where the interaction strength decays smoothly with distance.
 
 ---
-
 ## License
 MIT License. Feel free to use this code for educational purposes or as a template for custom MLFF development.
