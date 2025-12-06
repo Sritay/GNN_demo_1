@@ -107,7 +107,7 @@ To ensure the graph respects the crystal lattice, distances are calculated using
 $$\vec{\delta}_{ij} = (\vec{x}_j - \vec{x}_i) - \text{Box} \cdot \text{round}\left( \frac{\vec{x}_j - \vec{x}_i}{\text{Box}} \right)$$
 
 **B. Gaussian Radial Basis Function (RBF):**
-The elements of the adjacency matrix $A_{ij}$ are defined by a Gaussian kernel centered at the equilibrium bond length ($\mu \approx 2.77 \AA $):
+The elements of the adjacency matrix $A_{ij}$ are defined by a Gaussian kernel centered at the equilibrium bond length ($\mu \approx 2.77 \text{ Å} $):
 
 $$A_{ij} = \exp \left( - \frac{(\Vert \vec{\delta}_{ij} \Vert - \mu)^2}{\sigma^2} \right)$$
 
