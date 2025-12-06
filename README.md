@@ -98,9 +98,7 @@ python predict.py
 
 The core operation is a spatial convolution. The update rule for the feature vector $h_i$ at layer $l+1$ is:
 
-```text
-h_i^(l+1) = SiLU( Sum( W * h_j^(l) * Gaussian(r_ij) ) )
-```
+$$ h_i^{(l+1)} = \text{SiLU} \left( \sum_{j} W \cdot h_j^{(l)} \cdot \text{Gaussian}(r_{ij}) \right) $$
 
 Where the summation runs over all neighbors $j$, and $r_{ij}$ is the distance computed under Periodic Boundary Conditions.
 
