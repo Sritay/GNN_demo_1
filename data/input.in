@@ -1,0 +1,41 @@
+# =============================================================================
+# Generate training  and test data. Platinum crystal with defects.
+# =============================================================================
+
+# --- 1. System Setup ---
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+shell           rm -f training_data.xyz
+
+# --- 2. Create Base Crystal (3x3x3) ---
+lattice         fcc 3.92
+region          sim_box block 0 3 0 3 0 3
+create_box      1 sim_box
+create_atoms    1 box
+
+# --- 3. Pair interactions---
+pair_style      eam
+pair_coeff      * * Pt_u3.eam
+mass            1 195.084
+
+# --- 4. Create Defects ---
+delete_atoms    random count 1 no all NULL 12345
+create_atoms    1 random 1 54321 sim_box
+
+# --- 5. MINIMIZATION ---
+minimize        1.0e-4 1.0e-6 100 1000
+reset_timestep  0
+
+# --- 6. MD Setup ---
+velocity        all create 300.0 4928459 dist gaussian
+
+fix             1 all nvt temp 300.0 300.0 0.1
+
+compute         pe all pe/atom
+
+dump            1 all custom 10 training_data.xyz id type x y z fx fy fz c_pe
+dump_modify     1 sort id
+
+run             2000
