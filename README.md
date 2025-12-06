@@ -16,7 +16,7 @@ The architecture was implemented from scratch to demonstrate direct control over
 
 ### Training Data
 The model was trained on synthetic data generated via LAMMPS using an Embedded Atom Method (EAM) potential.
-* **Rationale:** EAM was chosen over DFT for this demo to allow for rapid iteration and high-volume data generation (1,000+ frames) during the architectural debugging phase.
+* **Rationale:** EAM was chosen over DFT for this demo to allow for rapid iteration and high-volume data generation (~200 frames) during the architectural debugging phase.
 * **Surrogate Modeling:** The model serves as a surrogate for the EAM potential. The pipeline allows training data to be swapped for DFT/Ab-Initio data without changing the model architecture.
 
 ---
