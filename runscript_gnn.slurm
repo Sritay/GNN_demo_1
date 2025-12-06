@@ -2,8 +2,8 @@
 
 #SBATCH --partition=serial
 #SBATCH --qos=serial
-#SBATCH --account=e760
-#SBATCH --job-name=BubbleCNN
+#SBATCH --account=xx
+#SBATCH --job-name=xx
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
@@ -11,8 +11,6 @@
 #SBATCH --time=03:00:00
 #SBATCH --hint=nomultithread
 #SBATCH --distribution=block:block
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=sritay.mistry@brunel.ac.uk
 #SBATCH --output=slurm_output_%j.txt
 #SBATCH --error=slurm_error_%j.txt
 
@@ -25,7 +23,7 @@ module load PrgEnv-cray
 
 # 2. Define Paths
 WORK_DIR="$PWD"
-SIF_IMAGE="/work/e760/e760/sritay/bubble_cnn/bubble_cnn.sif"
+SIF_IMAGE="path/to/image"
 
 echo "Job started at $(date)"
 echo "Running in: $WORK_DIR"
