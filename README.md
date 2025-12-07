@@ -46,6 +46,7 @@ The model was trained on small **108-atom** supercells and tested on an unseen *
 
 ### Parity Plot (Unseen Test Data)
 ![Parity Plot](prediction_parity.png)
+
 *The tight diagonal correlation demonstrates that the underlying physics of the Potential Energy Surface was learned, rather than simply memorizing coordinates.*
 
 ---
