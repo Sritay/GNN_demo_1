@@ -93,6 +93,21 @@ python predict.py
 * **Input:** `data/test_data.xyz` & `best_model.pth`
 * **Output:** `prediction_parity.png` & Metrics printed to console.
 
+### 4. Continuous Integration
+This repository includes a lightweight GitHub Actions workflow at `.github/workflows/ci.yml` that runs on pushes and pull requests. The job:
+
+1. Sets up Python 3.10
+2. Installs dependencies from `requirements.txt`
+3. Byte-compiles the entrypoints (`train_gnn.py`, `predict.py`)
+
+To run the same check locally:
+
+```bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m compileall train_gnn.py predict.py
+```
+
 ---
 
 ## Technical Details (The Math)
